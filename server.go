@@ -41,6 +41,8 @@ func main() {
 	mux.HandleFunc("/api/sendMessage", withCORS(sendMessage))
 	mux.HandleFunc("/api/sendFileByUrl", withCORS(sendFileByUrl))
 
+	fs := http.FileServer(http.Dir("./"))
+	mux.Handle("/", fs)
 	srv := &http.Server{
 		Addr:         ":8080",
 		Handler:      mux,
@@ -113,7 +115,7 @@ func getStateInstance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	greenUrl := fmt.Sprintf("%s/waInstance%s/getSettings/%s", GREEN_BASE, idInstance, apiToken)
+	greenUrl := fmt.Sprintf("%s/waInstance%s/getStateInstance/%s", GREEN_BASE, idInstance, apiToken)
 	proxyJSON(w, r, greenUrl, http.MethodGet, nil)
 }
 
@@ -135,6 +137,10 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	greenURL := fmt.Sprintf("%s/waInstance%s/sendMessage/%s", GREEN_BASE, body.IdInstance, body.ApiToken)
+
+	if !strings.Contains(body.ChatID, "@") {
+		body.ChatID = body.ChatID + "@c.us"
+	}
 
 	payload := map[string]string{
 		"chatId":  body.ChatID,
@@ -161,15 +167,30 @@ func sendFileByUrl(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusBadRequest, ErrorResp{"idInstance or apiToken is empty"})
 		return
 	}
-	if u, err := url.Parse(body.UrlFile); err != nil || u.Scheme == "" || u.Host == "" {
+
+	u, err := url.Parse(body.UrlFile)
+	if err != nil || u.Scheme == "" || u.Host == "" {
 		writeJSON(w, http.StatusBadRequest, ErrorResp{"urlFile is invalid"})
 		return
 	}
+
+	fileName := "file"
+	if u.Path != "" {
+		parts := strings.Split(u.Path, "/")
+		if len(parts) > 0 && strings.TrimSpace(parts[len(parts)-1]) != "" {
+			fileName = parts[len(parts)-1]
+		}
+	}
+
 	greenURL := fmt.Sprintf("%s/waInstance%s/sendFileByUrl/%s", GREEN_BASE, body.IdInstance, body.ApiToken)
 
+	if !strings.Contains(body.ChatID, "@") {
+		body.ChatID = body.ChatID + "@c.us"
+	}
 	payload := map[string]string{
-		"chatId": body.ChatID,
-		"url":    body.UrlFile,
+		"chatId":   body.ChatID,
+		"urlFile":  body.UrlFile,
+		"fileName": fileName,
 	}
 
 	b, _ := json.Marshal(payload)

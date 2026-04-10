@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GREEN-API Demo</title>
+    <style>
+        :root{
+            --green:#0d7a4d;
+            --line:#d9d9e2;
+            --panel:#ffffff;
+            --bg:#ffffff;
+            --field:#f2f2f6;
+            --btn:#e9e9f0;
+            --text:#2b2b35;
+        }
+        body{
+            margin:0;
+            background: var(--bg);
+            font-family: Arial, Helvetica, sans-serif;
+            color:var(--text);
+        }
+        .page{
+            width: 820px;
+            margin: 0 auto;
+            padding: 22px 0 26px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .brand-top{
+            position:absolute;
+            right: 18px;
+            top: 28px;
+            font-weight: 700;
+            color: var(--green);
+            font-size: 13px;
+        }
+        .brand-bottom{
+            margin-top: 14px;
+            padding-right: 56px;
+            font-weight: 800;
+            color: var(--green);
+            font-size: 13px;
+            text-align:right;
+            line-height: 1.1;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .content{
+            margin-top: 48px;
+            border: 2px solid var(--line);
+            background: var(--panel);
+            border-radius: 2px;
+            padding: 22px 22px 26px;
+            box-sizing: border-box;
+        }
+        .grid{
+            display:grid;
+            grid-template-columns: 320px 1fr;
+            gap: 18px;
+            align-items: start;
+        }
+        .left{ padding-left: 6px; padding-top: 6px; }
+        .right{ padding-top: 6px; }
+
+        .section-label{
+            font-size: 12px;
+            color:#6b6b79;
+            font-weight: 700;
+            margin: 0 0 6px 2px;
+        }
+        .field{
+            width: 100%;
+            box-sizing: border-box;
+            background: var(--field);
+            border: 2px solid #e2e2ea;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        button{
+            width: 100%;
+            background: var(--btn);
+            border: 2px solid #dedee8;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #6b6b78;
+            cursor: pointer;
+            user-select:none;
+            margin-bottom: 12px;
+        }
+
+        .outBlock{
+            border: 2px solid #dcdce6;
+            border-radius: 4px;
+            padding: 10px 12px;
+            background: #fff;
+            margin-bottom: 12px;
+        }
+        .outTitle{
+            font-size: 12px;
+            color:#6b6b79;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        textarea.out{
+            width: 100%;
+            height: 92px;
+            box-sizing: border-box;
+            background:#fff;
+            border: 1px solid #ececf4;
+            border-radius: 2px;
+            padding: 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 12px;
+            line-height: 1.35;
+            white-space: pre-wrap;
+            overflow:auto;
+            resize: none;
+        }
+    </style>
+</head>
+
+<body>
+<div class="page">
+    <div class="brand-top">GREEN API © 2025</div>
+
+    <div class="content">
+        <div class="grid">
+            <!-- LEFT -->
+            <div class="left">
+                <div>
+                    <div class="section-label">idInstance</div>
+                    <input id="idInstance" class="field" type="text" placeholder="Например: 1105581994" />
+                </div>
+
+                <div>
+                    <div class="section-label">ApiTokenInstance</div>
+                    <input id="apiToken" class="field" type="password" placeholder="Вставьте ApiTokenInstance" autocomplete="off" />
+                </div>
+
+                <button id="btnGetSettings" type="button">getSettings</button>
+                <button id="btnGetStateInstance" type="button">getStateInstance</button>
+
+                <div style="height:8px;"></div>
+
+                <div>
+                    <div class="section-label">chatId</div>
+                    <input id="chatId" class="field" type="text" placeholder="Например: 7999...@c.us" />
+                </div>
+
+                <div>
+                    <div class="section-label">message</div>
+                    <input id="message" class="field" type="text" placeholder="Hello Aaaa!" />
+                </div>
+
+                <button id="btnSendMessage" type="button">sendMessage</button>
+
+                <div>
+                    <div class="section-label">fileUrl</div>
+                    <input id="fileUrl" class="field" type="text" placeholder="https://.../horse.png" />
+                </div>
+
+                <button id="btnSendFileByUrl" type="button">sendFileByUrl</button>
+
+                <div class="muted" style="font-size:12px;color:#7a7a86;margin-top:8px;line-height:1.35;">
+                    Заполните поля и нажмите кнопки.
+                </div>
+            </div>
+
+            <!-- RIGHT -->
+            <div class="right">
+                <div class="outBlock">
+                    <div class="outTitle">getSettings (Ответ):</div>
+                    <textarea id="outGetSettings" class="out" readonly></textarea>
+                </div>
+
+                <div class="outBlock">
+                    <div class="outTitle">getStateInstance (Ответ):</div>
+                    <textarea id="outGetStateInstance" class="out" readonly></textarea>
+                </div>
+
+                <div class="outBlock">
+                    <div class="outTitle">sendMessage (Ответ):</div>
+                    <textarea id="outSendMessage" class="out" readonly></textarea>
+                </div>
+
+                <div class="outBlock" style="margin-bottom:0;">
+                    <div class="outTitle">sendFileByUrl (Ответ):</div>
+                    <textarea id="outSendFileByUrl" class="out" readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="brand-bottom">GREEN API ©<br/>2025</div>
+</div>
+
+<script>
+    const $ = (id) => document.getElementById(id);
+
+    const BACKEND_BASE = "http://localhost:8080";
+
+    function jsonToText(x) {
+        try { return JSON.stringify(x, null, 2); } catch { return String(x); }
+    }
+
+    async function fetchJSON(url, opts) {
+        const res = await fetch(url, opts);
+        const text = await res.text();
+
+        let data;
+        try { data = JSON.parse(text); } catch { data = text; }
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${jsonToText(data)}`);
+        return data;
+    }
+
+    async function getSettings() {
+        const idInstance = $("idInstance").value.trim();
+        const apiToken = $("apiToken").value.trim();
+
+        $("outGetSettings").value = "Выполняется getSettings...";
+
+        const url = `${BACKEND_BASE}/api/getSettings?idInstance=${encodeURIComponent(idInstance)}&apiToken=${encodeURIComponent(apiToken)}`;
+        const data = await fetchJSON(url, { method: "GET" });
+
+        $("outGetSettings").value = jsonToText(data);
+    }
+
+    async function getStateInstance() {
+        const idInstance = $("idInstance").value.trim();
+        const apiToken = $("apiToken").value.trim();
+
+        $("outGetStateInstance").value = "Выполняется getStateInstance...";
+
+        const url = `${BACKEND_BASE}/api/getStateInstance?idInstance=${encodeURIComponent(idInstance)}&apiToken=${encodeURIComponent(apiToken)}`;
+        const data = await fetchJSON(url, { method: "GET" });
+
+        $("outGetStateInstance").value = jsonToText(data);
+    }
+
+    async function sendMessage() {
+        const idInstance = $("idInstance").value.trim();
+        const apiToken = $("apiToken").value.trim();
+        const chatId = $("chatId").value.trim();
+        const message = $("message").value.trim();
+
+        $("outSendMessage").value = "Выполняется sendMessage...";
+
+        const url = `${BACKEND_BASE}/api/sendMessage`;
+        const data = await fetchJSON(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idInstance, apiToken, chatId, message })
+        });
+
+        $("outSendMessage").value = jsonToText(data);
+    }
+
+    async function sendFileByUrl() {
+        const idInstance = $("idInstance").value.trim();
+        const apiToken = $("apiToken").value.trim();
+        const chatId = $("chatId").value.trim();
+        const fileUrl = $("fileUrl").value.trim();
+
+        $("outSendFileByUrl").value = "Выполняется sendFileByUrl...";
+
+        const url = `${BACKEND_BASE}/api/sendFileByUrl`;
+        const data = await fetchJSON(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idInstance, apiToken, chatId, urlFile: fileUrl })
+        });
+
+        $("outSendFileByUrl").value = jsonToText(data);
+    }
+
+    $("btnGetSettings").addEventListener("click", async () => {
+        try { await getSettings(); } catch (e) { $("outGetSettings").value = "Ошибка: " + e.message; }
+    });
+
+    $("btnGetStateInstance").addEventListener("click", async () => {
+        try { await getStateInstance(); } catch (e) { $("outGetStateInstance").value = "Ошибка: " + e.message; }
+    });
+
+    $("btnSendMessage").addEventListener("click", async () => {
+        try { await sendMessage(); } catch (e) { $("outSendMessage").value = "Ошибка: " + e.message; }
+    });
+
+    $("btnSendFileByUrl").addEventListener("click", async () => {
+        try { await sendFileByUrl(); } catch (e) { $("outSendFileByUrl").value = "Ошибка: " + e.message; }
+    });
+</script>
+</body>
+</html>
